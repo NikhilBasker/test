@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from getmac import get_mac_address
 from werkzeug.security import generate_password_hash, check_password_hash
 import hashlib
@@ -12,7 +12,6 @@ api_bp = Blueprint('api', __name__)
 conn = sqlitecloud.connect("sqlitecloud://cnwui0evhz.g5.sqlite.cloud:8860/my-database?apikey=ee6Lm9tAV07WnebyuftsY4g5dMYDCVxWLaneQoWScww")
 
 def hash_mac_address(mac_address):
-    """Helper function to hash the MAC address."""
     return hashlib.sha256(mac_address.encode()).hexdigest()
 
 def execute_query(query, params=None):
@@ -23,6 +22,11 @@ def execute_query(query, params=None):
     except Exception as e:
         print(f"Error executing query: {str(e)}")
         return None
+
+@api_bp.route('/', methods=['GET'])
+@cross_origin()
+def home():
+    return jsonify({'message': 'Welcome to the Flask API!'})
 
 @api_bp.route('/register', methods=['POST'])
 @cross_origin()
